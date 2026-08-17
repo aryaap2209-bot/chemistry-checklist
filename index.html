@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧪 A* AQA Chemistry Master Checklist</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+:root{
+  --pink:#f7d6e3;
+  --pink-dark:#b66d8b;
+  --lavender:#ddd8f3;
+  --mint:#dcefe5;
+  --cream:#fffaf7;
+  --peach:#f8e2d2;
+  --text:#514852;
+  --muted:#8d818b;
+  --white:#ffffff;
+  --border:#eadde4;
+  --shadow:0 8px 25px rgba(120,90,110,.09);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:linear-gradient(135deg,#fff8fb,#f8f5ff,#f5fbf8);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+}
+
+.container{
+  max-width:1050px;
+  margin:auto;
+  padding:25px 18px 60px;
+}
+
+.hero{
+  text-align:center;
+  background:rgba(255,255,255,.78);
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:35px 20px 30px;
+  box-shadow:var(--shadow);
+}
+
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,5vw,48px);
+  margin:0;
+  color:#674f60;
+}
+
+.hero p{
+  color:var(--muted);
+  margin:10px auto 0;
+  max-width:700px;
+}
+
+.badges{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+
+.badge{
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.badge.pink{background:var(--pink)}
+.badge.lav{background:var(--lavender)}
+.badge.mint{background:var(--mint)}
+.badge.peach{background:var(--peach)}
+
+.progress-card{
+  margin-top:20px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:700;
+}
+
+.progress-bar{
+  height:15px;
+  background:#f0e8ed;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:12px;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#e9b8ca,#c9bee9,#b9dfca);
+  border-radius:999px;
+  transition:.3s;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin:20px 0;
+  flex-wrap:wrap;
+}
+
+input[type="search"]{
+  flex:1;
+  min-width:220px;
+  padding:13px 16px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  font:inherit;
+  background:white;
+  color:var(--text);
+}
+
+button{
+  border:0;
+  border-radius:15px;
+  padding:12px 16px;
+  font:inherit;
+  font-weight:600;
+  cursor:pointer;
+  background:var(--pink);
+  color:#694f60;
+}
+
+button:hover{
+  transform:translateY(-1px);
+}
+
+.section{
+  margin-top:22px;
+}
+
+.section-header{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  text-align:left;
+  padding:19px 20px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+}
+
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  color:#664f60;
+}
+
+.section-count{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.chevron{
+  font-size:18px;
+  transition:.2s;
+}
+
+.section.open .chevron{
+  transform:rotate(180deg);
+}
+
+.section-content{
+  display:none;
+  padding:10px 0 0;
+}
+
+.section.open .section-content{
+  display:block;
+}
+
+.topic{
+  background:rgba(255,255,255,.82);
+  border:1px solid var(--border);
+  border-radius:18px;
+  margin:10px 0;
+  overflow:hidden;
+}
+
+.topic-header{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  text-align:left;
+  background:white;
+  border-radius:0;
+  padding:15px 17px;
+}
+
+.topic-name{
+  font-weight:700;
+}
+
+.topic-progress{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.items{
+  padding:4px 17px 15px;
+}
+
+.item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px dashed #eee4e9;
+  font-size:14px;
+  line-height:1.45;
+}
+
+.item:last-child{
+  border-bottom:0;
+}
+
+.item input{
+  margin-top:4px;
+  accent-color:#c7839f;
+  width:17px;
+  height:17px;
+  flex-shrink:0;
+}
+
+.item.done label{
+  text-decoration:line-through;
+  color:#aaa;
+}
+
+.footer{
+  text-align:center;
+  margin-top:35px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:650px){
+  .container{padding:12px 10px 40px}
+  .hero{padding:28px 15px}
+  .section-title{font-size:17px}
+  .item{font-size:13px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="hero">
+  <h1>🧪 A* AQA Chemistry</h1>
+  <p>Whole-specification master checklist ♡</p>
+
+  <div class="badges">
+    <span class="badge pink">AS + A-level</span>
+    <span class="badge lav">7405</span>
+    <span class="badge mint">Practicals</span>
+    <span class="badge peach">A* Exam Skills</span>
+  </div>
+</header>
+
+<div class="progress-card">
+  <div class="progress-top">
+    <span>🎀 Overall A* Progress</span>
+    <span id="percentage">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div style="margin-top:9px;color:#8d818b;font-size:12px;text-align:center">
+    <span id="counter">0 / 0 completed</span>
+  </div>
+</div>
+
+<div class="controls">
+  <input id="search" type="search" placeholder="🔍 Search the specification...">
+  <button onclick="expandAll()">♡ Expand all</button>
+  <button onclick="collapseAll()">♡ Collapse all</button>
+  <button onclick="resetProgress()">Reset</button>
+</div>
+
+<div id="checklist"></div>
+
+<div class="footer">
+  🧪 A* Chemistry • Every tick should mean “I can recall AND apply this.” ♡
+</div>
+
+</div>
+
+<script>
+
+const sections = [
+
+{
+title:"🌸 3.1 Physical Chemistry",
+topics:[
+
+{
+name:"3.1.1 Atomic Structure",
+items:[
+"Fundamental particles: relative charge and relative mass",
+"Atomic number and mass number",
+"Number of protons, neutrons and electrons in atoms and ions",
+"Isotopes",
+"Time-of-flight mass spectrometry",
+"Ionisation, acceleration, ion drift and detection",
+"Interpret simple mass spectra",
+"Calculate relative atomic mass from isotopic abundance",
+"Relative atomic mass and relative molecular mass",
+"Relative formula mass",
+"Electron shells, subshells and orbitals",
+"Electron configurations",
+"First ionisation energy",
+"Successive ionisation energies",
+"Interpret successive ionisation-energy data",
+"Explain trends in first ionisation energy",
+"Explain anomalies in first ionisation energy"
+]},
+
+{
+name:"3.1.2 Amount of Substance",
+items:[
+"The mole and Avogadro constant",
+"Mass, Mr and amount in moles",
+"Concentration in mol dm⁻³",
+"Ideal gas equation pV = nRT",
+"Use correct SI units in gas calculations",
+"Balanced chemical equations",
+"Mole ratios",
+"Mass calculations",
+"Gas-volume calculations",
+"Percentage yield",
+"Percentage atom economy",
+"Concentrations and volumes in solution",
+"Empirical formula",
+"Molecular formula",
+"Hydrated salts",
+"Titration calculations",
+"Mean titre and anomalous titres",
+"Uncertainty in burette readings"
+]},
+
+{
+name:"3.1.3 Bonding",
+items:[
+"Ionic bonding",
+"Covalent bonding",
+"Metallic bonding",
+"Electronegativity",
+"Bond polarity",
+"Coordinate/dative bonding",
+"Shapes of molecules and ions",
+"Electron-pair repulsion",
+"Bond angles",
+"Intermolecular forces",
+"London forces",
+"Permanent dipole-dipole interactions",
+"Hydrogen bonding",
+"Structure and properties",
+"Melting and boiling points",
+"Electrical conductivity",
+"Solubility",
+"Explain physical properties from bonding and structure"
+]},
+
+{
+name:"3.1.4 Energetics",
+items:[
+"Exothermic and endothermic reactions",
+"Enthalpy change",
+"Standard enthalpy changes",
+"Calorimetry",
+"q = mcΔT",
+"Calculate enthalpy change from experimental data",
+"Sources of experimental error",
+"Systematic and random errors",
+"Hess's law",
+"Enthalpy cycles",
+"Mean bond enthalpies",
+"Use bond enthalpies to estimate enthalpy changes",
+"Limitations of mean bond enthalpies",
+"Required practical calorimetry skills"
+]},
+
+{
+name:"3.1.5 Kinetics",
+items:[
+"Collision theory",
+"Activation energy",
+"Factors affecting rate",
+"Temperature",
+"Concentration",
+"Pressure",
+"Surface area",
+"Catalysts",
+"Concentration-time graphs",
+"Initial rates",
+"Rate from gradients/tangents",
+"Interpret rate graphs",
+"Effect of changing conditions on rate",
+"Required practical rate measurements"
+]},
+
+{
+name:"3.1.6 Chemical Equilibria, Le Chatelier's Principle and Kc",
+items:[
+"Dynamic equilibrium",
+"Closed systems",
+"Forward and reverse reactions",
+"Equilibrium position",
+"Le Chatelier's principle",
+"Effect of concentration",
+"Effect of pressure",
+"Effect of temperature",
+"Industrial applications of equilibrium",
+"Equilibrium constant Kc",
+"Kc expressions",
+"Kc calculations",
+"Units of Kc where applicable",
+"Interpret magnitude of Kc"
+]},
+
+{
+name:"3.1.7 Oxidation, Reduction and Redox Equations",
+items:[
+"Oxidation and reduction",
+"Oxidation states",
+"Rules for assigning oxidation states",
+"Oxidising agents",
+"Reducing agents",
+"Half equations",
+"Balance redox equations",
+"Use oxidation states to identify oxidation/reduction"
+]},
+
+{
+name:"3.1.8 Thermodynamics — A-level only",
+items:[
+"Entropy",
+"Entropy changes",
+"Standard entropy",
+"Calculate entropy changes",
+"Feasibility of reactions",
+"Gibbs free energy",
+"ΔG = ΔH − TΔS",
+"Temperature and feasibility",
+"Limitations of thermodynamic predictions"
+]},
+
+{
+name:"3.1.9 Rate Equations — A-level only",
+items:[
+"Rate equations",
+"Orders of reaction",
+"Zero-order reactions",
+"First-order reactions",
+"Second-order reactions",
+"Initial-rate method",
+"Determine order from data",
+"Rate constant k",
+"Units of k",
+"Rate-concentration graphs",
+"Rate-time graphs",
+"Half-life of first-order reactions",
+"Arrhenius equation",
+"Activation energy",
+"Pre-exponential factor",
+"Rate-determining step",
+"Mechanism from rate equation"
+]},
+
+{
+name:"3.1.10 Equilibrium Constant Kp — A-level only",
+items:[
+"Partial pressure",
+"Equilibrium partial pressures",
+"Kp expression",
+"Calculate Kp",
+"Units of Kp",
+"Interpret Kp",
+"Homogeneous gaseous equilibria"
+]},
+
+{
+name:"3.1.11 Electrode Potentials and Electrochemical Cells — A-level only",
+items:[
+"Standard electrode potential",
+"Electrochemical cells",
+"Standard conditions",
+"Cell notation",
+"Electrode potentials",
+"Use the data booklet",
+"Predict feasibility",
+"Calculate cell potentials",
+"Limitations of E° predictions",
+"Redox reactions from electrode data",
+"Fuel cells"
+]},
+
+{
+name:"3.1.12 Acids and Bases — A-level only",
+items:[
+"Brønsted-Lowry acids and bases",
+"Conjugate acid-base pairs",
+"Strong and weak acids",
+"Strong and weak bases",
+"pH",
+"pH calculations",
+"Ka",
+"Ka expressions",
+"pKa",
+"Calculate Ka",
+"Acid-base equilibria",
+"Buffer solutions",
+"How buffers work",
+"Calculate buffer pH",
+"Acid-base titration curves",
+"Indicator choice",
+"Equivalence point",
+"Half-equivalence point"
+]}
+
+]},
+
+{
+title:"🌿 3.2 Inorganic Chemistry",
+topics:[
+
+{
+name:"3.2.1 Periodicity",
+items:[
+"s, p, d and f blocks",
+"Periodic trends",
+"Atomic radius",
+"First ionisation energy",
+"Melting points across Period 3",
+"Structure and bonding of Period 3 elements",
+"Period 3 oxides",
+"Acid-base behaviour of oxides",
+"Reactions of Period 3 oxides with water",
+"Reactions with acids and bases",
+"Equations for Period 3 chemistry"
+]},
+
+{
+name:"3.2.2 Group 2 — Alkaline Earth Metals",
+items:[
+"Electronic configuration",
+"Reactivity down Group 2",
+"First ionisation energy trends",
+"Reactions with oxygen",
+"Reactions with water",
+"Reactions with dilute acids",
+"Solubility of hydroxides",
+"Solubility of sulfates",
+"Thermal stability of carbonates",
+"Thermal stability of nitrates",
+"Uses of Group 2 compounds",
+"Flame tests"
+]},
+
+{
+name:"3.2.3 Group 7 — Halogens",
+items:[
+"Electronic configuration",
+"Physical properties of halogens",
+"Trends down Group 7",
+"Oxidising ability",
+"Displacement reactions",
+"Halide ions as reducing agents",
+"Reactions with sulfuric acid",
+"Tests for halide ions",
+"Chlorine in water",
+"Disproportionation",
+"Uses of chlorine"
+]},
+
+{
+name:"3.2.4 Properties of Period 3 Elements and Their Oxides — A-level only",
+items:[
+"Physical properties of Period 3 elements",
+"Melting points",
+"Structures of Period 3 elements",
+"Period 3 oxides",
+"Bonding in oxides",
+"Acid-base behaviour",
+"Reactions with water",
+"Reactions with acids",
+"Reactions with bases",
+"Equations for Period 3 oxide reactions"
+]},
+
+{
+name:"3.2.5 Transition Metals — A-level only",
+items:[
+"Definition of transition metals",
+"Electronic configurations of Ti to Cu",
+"Incomplete d sub-level",
+"Variable oxidation states",
+"Coloured ions",
+"Complex formation",
+"Ligands",
+"Coordinate bonds",
+"Coordination number",
+"Shapes of complexes",
+"Monodentate ligands",
+"Bidentate ligands",
+"Multidentate ligands",
+"Isomerism in complexes",
+"Ligand substitution",
+"Water as a ligand",
+"Ammonia as a ligand",
+"Chloride ions as ligands",
+"Precipitation reactions",
+"Colour changes",
+"Redox reactions involving transition metals",
+"Transition metals as catalysts",
+"Heterogeneous catalysis",
+"Homogeneous catalysis",
+"Autocatalysis"
+]},
+
+{
+name:"3.2.6 Reactions of Ions in Aqueous Solution — A-level only",
+items:[
+"Tests for aqueous cations",
+"Tests for anions",
+"Precipitation reactions",
+"Hydroxide precipitates",
+"Ammonia tests",
+"Carbonate tests",
+"Sulfate tests",
+"Halide tests",
+"Flame tests",
+"Complex ion formation",
+"Interpret observations",
+"Write ionic equations",
+"Required practical observations"
+]}
+
+]},
+
+{
+title:"🌷 3.3 Organic Chemistry",
+topics:[
+
+{
+name:"3.3.1 Introduction to Organic Chemistry",
+items:[
+"Functional groups",
+"Homologous series",
+"General formulae",
+"Nomenclature",
+"IUPAC naming",
+"Structural formulae",
+"Displayed formulae",
+"Condensed formulae",
+"Structural isomerism",
+"Chain isomerism",
+"Position isomerism",
+"Functional-group isomerism",
+"Mechanisms",
+"Curly arrows",
+"Homolytic fission",
+"Heterolytic fission",
+"Free radicals",
+"Nucleophiles",
+"Electrophiles"
+]},
+
+{
+name:"3.3.2 Alkanes",
+items:[
+"Structure of alkanes",
+"General formula",
+"Combustion",
+"Complete combustion",
+"Incomplete combustion",
+"Free-radical substitution",
+"Initiation",
+"Propagation",
+"Termination",
+"Conditions for chlorination/bromination",
+"Limitations of substitution"
+]},
+
+{
+name:"3.3.3 Halogenoalkanes",
+items:[
+"Structure and nomenclature",
+"Reactivity of C-X bonds",
+"Hydrolysis",
+"Nucleophilic substitution",
+"Elimination",
+"Aqueous hydroxide",
+"Ethanolic hydroxide",
+"Reaction conditions",
+"Mechanisms",
+"Primary, secondary and tertiary halogenoalkanes",
+"Factors affecting substitution/elimination"
+]},
+
+{
+name:"3.3.4 Alkenes",
+items:[
+"Structure of alkenes",
+"General formula",
+"Electrophilic addition",
+"Addition of hydrogen",
+"Addition of halogens",
+"Addition of hydrogen halides",
+"Hydration",
+"Mechanisms",
+"Polymerisation",
+"Addition polymers",
+"Test for unsaturation",
+"Bromine water"
+]},
+
+{
+name:"3.3.5 Alcohols",
+items:[
+"Classification of alcohols",
+"Primary alcohols",
+"Secondary alcohols",
+"Tertiary alcohols",
+"Combustion",
+"Reaction with sodium",
+"Oxidation",
+"Oxidation of primary alcohols",
+"Oxidation of secondary alcohols",
+"Dehydration",
+"Elimination",
+"Preparation of alcohols",
+"Reflux",
+"Distillation"
+]},
+
+{
+name:"3.3.6 Organic Analysis",
+items:[
+"Tests for alcohols",
+"Tests for aldehydes",
+"Tests for alkenes",
+"Tests for carboxylic acids",
+"Mass spectrometry",
+"Molecular ion peak",
+"Fragmentation",
+"Infrared spectroscopy",
+"Functional-group identification",
+"Fingerprint region",
+"Use of data booklet"
+]},
+
+{
+name:"3.3.7 Optical Isomerism — A-level only",
+items:[
+"Chiral centres",
+"Optical isomers",
+"Enantiomers",
+"Non-superimposable mirror images",
+"Racemic mixtures",
+"Optical activity",
+"Identify chiral molecules",
+"Draw optical isomers"
+]},
+
+{
+name:"3.3.8 Aldehydes and Ketones — A-level only",
+items:[
+"Structure of aldehydes",
+"Structure of ketones",
+"Nomenclature",
+"Oxidation of aldehydes",
+"Reduction",
+"NaBH4",
+"Nucleophilic addition",
+"2,4-DNPH test",
+"Tollens' reagent",
+"Fehling's solution",
+"Distinguish aldehydes and ketones",
+"Mechanisms"
+]},
+
+{
+name:"3.3.9 Carboxylic Acids and Derivatives — A-level only",
+items:[
+"Structure of carboxylic acids",
+"Acidity",
+"Reactions with metals",
+"Reactions with bases",
+"Reactions with carbonates",
+"Esters",
+"Esterification",
+"Hydrolysis",
+"Acid hydrolysis",
+"Alkaline hydrolysis",
+"Acyl chlorides",
+"Reactions of acyl chlorides",
+"Nucleophilic addition-elimination",
+"Mechanisms"
+]},
+
+{
+name:"3.3.10 Aromatic Chemistry — A-level only",
+items:[
+"Structure of benzene",
+"Delocalised electrons",
+"Evidence for benzene structure",
+"Stability of benzene",
+"Electrophilic substitution",
+"Nitration",
+"Friedel-Crafts-type chemistry where specified",
+"Phenol",
+"Reactions of phenol",
+"Electrophilic substitution of phenol",
+"Conditions and mechanisms"
+]},
+
+{
+name:"3.3.11 Amines — A-level only",
+items:[
+"Structure of amines",
+"Primary amines",
+"Secondary amines",
+"Tertiary amines",
+"Basicity",
+"Reaction with acids",
+"Preparation of amines",
+"Reduction of nitriles",
+"Ammonia and amines",
+"Acylation",
+"Formation of amides",
+"Diazonium chemistry where specified"
+]},
+
+{
+name:"3.3.12 Polymers — A-level only",
+items:[
+"Addition polymers",
+"Condensation polymers",
+"Alkenes as monomers",
+"Polyalkenes",
+"Polyesters",
+"Polyamides",
+"Monomer identification",
+"Repeat units",
+"Formation of condensation polymers",
+"Hydrolysis",
+"Biodegradability",
+"Environmental issues"
+]},
+
+{
+name:"3.3.13 Amino Acids, Proteins and DNA — A-level only",
+items:[
+"Structure of amino acids",
+"Zwitterions",
+"Acid-base behaviour",
+"Peptide bonds",
+"Dipeptides",
+"Polypeptides",
+"Primary structure",
+"Secondary structure",
+"Protein structure",
+"Hydrogen bonding",
+"DNA structure",
+"Base pairing",
+"Hydrogen bonds in DNA"
+]},
+
+{
+name:"3.3.14 Organic Synthesis — A-level only",
+items:[
+"Plan multi-step syntheses",
+"Choose suitable reagents",
+"Choose reaction conditions",
+"Identify intermediates",
+"Functional-group interconversion",
+"Use reactions across the specification",
+"Up to four-step synthesis",
+"Atom economy",
+"Percentage yield",
+"Purification",
+"Recrystallisation",
+"Distillation",
+"Chromatography"
+]},
+
+{
+name:"3.3.15 Nuclear Magnetic Resonance Spectroscopy — A-level only",
+items:[
+"13C NMR",
+"1H NMR",
+"Chemical shift",
+"δ scale",
+"TMS standard",
+"Why TMS is suitable",
+"Number of environments",
+"Integration",
+"Relative numbers of protons",
+"Spin-spin splitting",
+"n+1 rule",
+"Doublets",
+"Triplets",
+"Quartets",
+"Use NMR with IR and mass spectrometry",
+"Deduce structures from spectra"
+]},
+
+{
+name:"3.3.16 Chromatography — A-level only",
+items:[
+"Paper chromatography",
+"Thin-layer chromatography",
+"Gas chromatography",
+"Stationary phase",
+"Mobile phase",
+"Retention factors",
+"Rf values",
+"Interpret chromatograms",
+"Use chromatography for identification",
+"Use chromatography for purity"
+]}
+
+]},
+
+{
+title:"🔬 Required Practicals & Practical Skills",
+topics:[
+
+{
+name:"Required Practical 1",
+items:[
+"Make up a volumetric solution",
+"Carry out an acid-base titration",
+"Use burette correctly",
+"Use pipette correctly",
+"Use volumetric flask correctly",
+"Record titres appropriately",
+"Calculate concentration",
+"Assess uncertainty"
+]},
+
+{
+name:"Required Practical 2",
+items:[
+"Measurement of an enthalpy change",
+"Calorimetry",
+"Temperature measurements",
+"Calculate enthalpy change",
+"Evaluate experimental limitations"
+]},
+
+{
+name:"Required Practical 3",
+items:[
+"Qualitative tests for ions",
+"Carry out appropriate tests",
+"Record observations",
+"Identify unknown ions",
+"Write ionic equations"
+]},
+
+{
+name:"Required Practical 4",
+items:[
+"Investigate rates of reaction",
+"Measure temperature/concentration effects",
+"Collect suitable data",
+"Calculate rates",
+"Plot and interpret graphs"
+]},
+
+{
+name:"Required Practical 5",
+items:[
+"Preparation of an organic solid",
+"Recrystallisation",
+"Filtration",
+"Drying",
+"Determine melting point"
+]},
+
+{
+name:"Required Practical 6",
+items:[
+"Tests for alcohols",
+"Tests for aldehydes",
+"Tests for alkenes",
+"Tests for carboxylic acids",
+"Identify functional groups from observations"
+]},
+
+{
+name:"Required Practical 7",
+items:[
+"Measure rate using initial-rate method",
+"Measure rate using continuous monitoring",
+"Determine order where appropriate",
+"Process rate data",
+"Evaluate method"
+]},
+
+{
+name:"Required Practical 8",
+items:[
+"Investigate equilibrium",
+"Collect equilibrium data",
+"Interpret equilibrium changes",
+"Apply Le Chatelier's principle"
+]},
+
+{
+name:"Required Practical 9",
+items:[
+"Carry out a redox titration",
+"Use appropriate indicators",
+"Calculate concentration",
+"Evaluate uncertainty"
+]},
+
+{
+name:"Required Practical 10",
+items:[
+"Preparation of an organic liquid",
+"Distillation",
+"Purification",
+"Assess purity"
+]},
+
+{
+name:"Required Practical 11",
+items:[
+"Investigate electrochemical cells",
+"Measure electrode potentials",
+"Use standard conditions",
+"Record cell potentials",
+"Compare with data booklet"
+]},
+
+{
+name:"Required Practical 12",
+items:[
+"Identify organic compounds",
+"Use spectroscopy",
+"Use chromatography",
+"Combine analytical evidence",
+"Deduce structure"
+]},
+
+{
+name:"Practical Skills & Data Analysis",
+items:[
+"Risk assessment",
+"Safe handling of chemicals",
+"Correct use of apparatus",
+"Measurement uncertainty",
+"Random error",
+"Systematic error",
+"Percentage uncertainty",
+"Absolute uncertainty",
+"Significant figures",
+"Decimal places",
+"Anomalies",
+"Means",
+"Best-fit lines",
+"Gradients",
+"Intercepts",
+"Evaluate experimental methods",
+"Suggest realistic improvements",
+"Identify limitations",
+"Interpret experimental data"
+]}
+
+]},
+
+{
+title:"🧮 Mathematical & Calculation Skills",
+topics:[
+
+{
+name:"Core Chemistry Calculations",
+items:[
+"Standard form",
+"Significant figures",
+"Decimal places",
+"Ratios",
+"Percentages",
+"Percentage change",
+"Rearrange equations",
+"Substitute into equations",
+"Use units correctly",
+"Convert units",
+"Graphs",
+"Gradient",
+"Intercept",
+"Logarithms",
+"Exponential relationships",
+"Natural logarithms where required",
+"Use calculator appropriately"
+]},
+
+{
+name:"Chemistry-Specific Calculations",
+items:[
+"Moles",
+"Mr",
+"Concentration",
+"Gas equations",
+"Empirical formula",
+"Molecular formula",
+"Percentage yield",
+"Atom economy",
+"Titrations",
+"Uncertainty",
+"Enthalpy changes",
+"Hess cycles",
+"Bond enthalpies",
+"Rate equations",
+"Rate constants",
+"Kc",
+"Kp",
+"pH",
+"Ka",
+"pKa",
+"Buffer calculations",
+"Electrode potentials",
+"ΔG calculations"
+]}
+
+]},
+
+{
+title:"🎀 A* Exam Technique",
+topics:[
+
+{
+name:"Mark-Scheme Technique",
+items:[
+"Answer exactly what the question asks",
+"Use precise chemical terminology",
+"Include required conditions",
+"Include state symbols where appropriate",
+"Write balanced equations",
+"Use curly arrows correctly",
+"Explain rather than simply state",
+"Use cause → effect chains",
+"Use data from the question",
+"Don't add irrelevant chemistry"
+]},
+
+{
+name:"Calculation Technique",
+items:[
+"Write the relevant equation",
+"Substitute clearly",
+"Show working",
+"Use correct units",
+"Use appropriate significant figures",
+"Check answer magnitude",
+"Don't round too early"
+]},
+
+{
+name:"Data & Graph Questions",
+items:[
+"Read axes correctly",
+"Use correct units",
+"Describe trends accurately",
+"Explain trends chemically",
+"Identify anomalies",
+"Use gradients correctly",
+"Draw suitable best-fit lines",
+"Interpret unfamiliar data",
+"Link multiple pieces of evidence"
+]},
+
+{
+name:"Synoptic Chemistry",
+items:[
+"Connect physical and organic chemistry",
+"Connect inorganic and physical chemistry",
+"Use multiple specification areas in one question",
+"Identify hidden topics",
+"Apply familiar chemistry to unfamiliar contexts",
+"Combine practical and theoretical evidence",
+"Complete multi-step reasoning questions"
+]},
+
+{
+name:"Past Paper Readiness",
+items:[
+"Complete untimed topic questions",
+"Complete mixed-topic questions",
+"Complete timed sections",
+"Complete full Paper 1",
+"Complete full Paper 2",
+"Complete full Paper 3",
+"Practise practical/data questions",
+"Practise multiple choice",
+"Mark using official mark schemes",
+"Log every lost mark",
+"Redo mistakes after a delay",
+"Complete full papers under exam conditions"
+]}
+
+]}
+
+];
+
+const checklist=document.getElementById("checklist");
+let allItems=[];
+
+function render(){
+  checklist.innerHTML="";
+  allItems=[];
+
+  sections.forEach((section,sIndex)=>{
+    const sec=document.createElement("div");
+    sec.className="section";
+
+    const header=document.createElement("button");
+    header.className="section-header";
+
+    const left=document.createElement("div");
+    left.innerHTML=`
+      <div class="section-title">${section.title}</div>
+      <div class="section-count" id="section-count-${sIndex}"></div>
+    `;
+
+    const chev=document.createElement("span");
+    chev.className="chevron";
+    chev.textContent="⌄";
+
+    header.appendChild(left);
+    header.appendChild(chev);
+
+    const content=document.createElement("div");
+    content.className="section-content";
+
+    section.topics.forEach((topic,tIndex)=>{
+      const topicBox=document.createElement("div");
+      topicBox.className="topic";
+
+      const topicHeader=document.createElement("button");
+      topicHeader.className="topic-header";
+
+      const topicName=document.createElement("span");
+      topicName.className="topic-name";
+      topicName.textContent=topic.name;
+
+      const topicProgress=document.createElement("span");
+      topicProgress.className="topic-progress";
+      topicProgress.id=`topic-progress-${sIndex}-${tIndex}`;
+
+      topicHeader.appendChild(topicName);
+      topicHeader.appendChild(topicProgress);
+
+      const items=document.createElement("div");
+      items.className="items";
+
+      topic.items.forEach((text,i)=>{
+        const id=`s${sIndex}-t${tIndex}-i${i}`;
+
+        const row=document.createElement("div");
+        row.className="item";
+
+        const cb=document.createElement("input");
+        cb.type="checkbox";
+        cb.id=id;
+        cb.dataset.id=id;
+
+        const saved=localStorage.getItem(id);
+        if(saved==="true") cb.checked=true;
+
+        const label=document.createElement("label");
+        label.htmlFor=id;
+        label.textContent=text;
+
+        if(cb.checked) row.classList.add("done");
+
+        cb.addEventListener("change",()=>{
+          localStorage.setItem(id,cb.checked);
+          row.classList.toggle("done",cb.checked);
+          updateProgress();
+        });
+
+        row.appendChild(cb);
+        row.appendChild(label);
+        items.appendChild(row);
+
+        allItems.push({
+          checkbox:cb,
+          section:sIndex,
+          topic:tIndex,
+          row:row
+        });
+      });
+
+      topicHeader.addEventListener("click",()=>{
+        items.classList.toggle("hidden");
+      });
+
+      topicBox.appendChild(topicHeader);
+      topicBox.appendChild(items);
+      content.appendChild(topicBox);
+    });
+
+    header.addEventListener("click",()=>{
+      sec.classList.toggle("open");
+    });
+
+    sec.appendChild(header);
+    sec.appendChild(content);
+    checklist.appendChild(sec);
+  });
+
+  updateProgress();
+}
+
+function updateProgress(){
+  const total=allItems.length;
+  const done=allItems.filter(x=>x.checkbox.checked).length;
+  const pct=total ? Math.round(done/total*100) : 0;
+
+  document.getElementById("percentage").textContent=pct+"%";
+  document.getElementById("counter").textContent=`${done} / ${total} completed`;
+  document.getElementById("progressFill").style.width=pct+"%";
+
+  sections.forEach((section,s)=>{
+    let sectionItems=allItems.filter(x=>x.section===s);
+    let completed=sectionItems.filter(x=>x.checkbox.checked).length;
+
+    document.getElementById(`section-count-${s}`).textContent=
+      `${completed} / ${sectionItems.length} completed`;
+
+    section.topics.forEach((topic,t)=>{
+      let topicItems=allItems.filter(x=>x.section===s && x.topic===t);
+      let topicDone=topicItems.filter(x=>x.checkbox.checked).length;
+
+      document.getElementById(`topic-progress-${s}-${t}`).textContent=
+        `${topicDone}/${topicItems.length}`;
+    });
+  });
+}
+
+function expandAll(){
+  document.querySelectorAll(".section").forEach(x=>x.classList.add("open"));
+}
+
+function collapseAll(){
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("open"));
+}
+
+function resetProgress(){
+  if(!confirm("Reset ALL checklist progress? This cannot be undone.")) return;
+
+  allItems.forEach(x=>{
+    x.checkbox.checked=false;
+    x.row.classList.remove("done");
+    localStorage.removeItem(x.checkbox.dataset.id);
+  });
+
+  updateProgress();
+}
+
+document.getElementById("search").addEventListener("input",function(){
+  const query=this.value.toLowerCase().trim();
+
+  document.querySelectorAll(".topic").forEach(topic=>{
+    const text=topic.innerText.toLowerCase();
+
+    if(!query){
+      topic.classList.remove("hidden");
+      topic.querySelector(".items").classList.remove("hidden");
+      return;
+    }
+
+    if(text.includes(query)){
+      topic.classList.remove("hidden");
+      topic.querySelector(".items").classList.remove("hidden");
+    }else{
+      topic.classList.add("hidden");
+    }
+  });
+
+  document.querySelectorAll(".section").forEach(section=>{
+    const visible=section.querySelectorAll(".topic:not(.hidden)").length;
+
+    if(query && visible>0){
+      section.classList.add("open");
+    }
+
+    if(query && visible===0){
+      section.classList.add("hidden");
+    }else{
+      section.classList.remove("hidden");
+    }
+  });
+});
+
+render();
+
+</script>
+
+</body>
+</html>
